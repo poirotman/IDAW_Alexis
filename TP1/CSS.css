@@ -12,6 +12,7 @@
     display: inline-block;
     margin-right: 10%;
     margin-left: 10%;
+    height: 70px;
 }
 .button{
     background-color:#201b22;
@@ -19,8 +20,8 @@
     color: #ececec;
     text-align:center;
     font-size:16px;
-    padding: 15px 32px;
-    width:5%;
+    padding: 25px 42px;
+    margin: 5%;
     text-decoration: none;
     transition-duration: 0.4s;
 }
@@ -54,4 +55,9 @@ body{
 .Projet_link{
     text-decoration:none;
     color:#ececec;
+}
+
+.Projet:hover{
+    background-color:#44566c ;
+    border:solid 3px #44566c;
 }
