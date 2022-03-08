@@ -1,0 +1,101 @@
+#menu{
+    display: flex;
+    align-items: center;
+    background-color:#44566c;
+    text-align: center;
+    padding:30px 0px;
+    margin-bottom: 20px;
+    margin-top: 20px;
+    position: sticky;
+    top:0;
+}
+#currentpage{
+    background-color:#ececec;
+    color:#201b22;
+}
+.menu{
+    display: inline-block;
+    
+}
+.button{
+    border-right: solid 1px #ececec;
+    color: #ececec;
+    text-align:center;
+    font-size:24px;
+    padding: 30px 50px;
+    text-decoration: none;
+    transition-duration: 0.4s;
+}
+.button:hover{
+    background-color:#ececec;
+    color:#201b22;
+}
+h1{
+    text-align: center;
+    font-size: 56px;
+}
+body{
+    background-color:#2f435e;
+    font-size: 20px;
+    color: #ececec; 
+}
+/* CSS Pour la pages Projets */
+.Projet{
+    width: 400px;
+    /*height: 450px;*/
+    border-radius: 10px;
+    border: solid 3px #4b5e65;
+    background-color: #4b5e65;
+    display: inline-block;
+    padding: 10px;
+    margin: 2%;
+}
+.Projet img{
+    width:100%;
+}
+.Projet_link{
+    text-decoration:none;
+    color:#ececec;
+}
+
+.Projet:hover{
+    background-color:#44566c ;
+    border:solid 3px #44566c;
+}
+
+.Titre {
+    overflow-y: auto;
+    height: 150px;
+}
+
+/* CSS pour la page CV */
+.img-profil{
+    border-radius: 50%;
+    height: 250px;
+    width: 250px;
+    object-fit:cover;
+    object-position:50% 50%;
+}
+.flex-container{
+    display:flex;
+    flex-flow: row wrap;
+    justify-content: space-evenly;
+    align-items: flex-start;
+    align-content: center;
+}
+.flex-item{
+    width:40%;
+    margin-bottom:20px;
+}
+.img-center{
+    display:flex;
+    justify-content: center;
+}
+h2{
+    text-align:center;
+}
+
+/*Page contact*/
+a:visited{
+    color: #ececec;
+}
