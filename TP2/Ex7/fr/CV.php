@@ -1,7 +1,7 @@
 
     <div class="flex-container">
         <div class="flex-item">
-            <h2>Profil</h2>
+            <h2>Profile</h2>
             <p>Je suis un étudiant en 4éme année d'école d'ingénieur, spécialisé dans le réseau et le developpement web.</p>
             <p>Je suis actuellement à la recherche d'un stage d'une durée de 4mois dans ces domaines</p>
         </div>
