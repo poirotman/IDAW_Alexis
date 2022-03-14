@@ -6,33 +6,39 @@ if(isset($_GET['disconnected'])){
     echo 'you are disconnected, please go back to the form';
 }
 else{
-    // on simule une base de données
-    $users = array(
-    // login => password
-    'riri' => 'fifi',
-    'yoda' => 'maitrejedi',
-    'admin' => 'rootAdmin');
+    // on se connecte à la base de donnée
+    $servername = 'localhost';
+    $username = 'root';
+    $password = '';
+    $dbname='identifiant';
+    $conn = new mysqli($servername, $username, $password,$dbname);
+
     $login = "anonymous";
     $errorText = "";
     $successfullyLogged = false;
+
     if(isset($_POST['login']) && isset($_POST['password'])) {
         $tryLogin=$_POST['login'];
         $tryPwd=$_POST['password'];
         // si login existe et password correspond
-        if( array_key_exists($tryLogin,$users) && $users[$tryLogin]==$tryPwd ) {
+        $res = $conn->query("SELECT * FROM personne WHERE login='".$tryLogin."' AND password='".$tryPwd."'");
+        if( $res->num_rows>0) {
+            $row=$res->fetch_assoc();
             $successfullyLogged = true;
+            echo "<h1>Bienvenu ".$row['pseudo']."</h1>";
             $login = $tryLogin;
+            $password=$tryPwd;
         } else
             $errorText = "Erreur de login/password";
     } else
-    $errorText = "Merci d'utiliser le formulaire de login";
+        $errorText = "Merci d'utiliser le formulaire de login";
     if(!$successfullyLogged) {
-    echo $errorText;
+        echo $errorText;
     } else {
-    $_SESSION['login']=$_POST['login'];
-    echo "<h1>Bienvenu ".$login."</h1>";
-    echo '<br></br><a href="connected.php?disconnected=true">disconnected</a>';
+        $_SESSION['login']=$_POST['login'];
+        echo '<br></br><a href="connected.php?disconnected=true">disconnected</a>';
     }
+    $conn->close();
 }
 ?>
 <br></br>

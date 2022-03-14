@@ -1,5 +1,4 @@
 <?php
-    session_start();
     $DEFAULT ='style1';
     if(isset($_GET['css'])){
         if(isset($_COOKIE['Style'])){
@@ -20,7 +19,6 @@
     else{
         echo '<link rel="stylesheet" href="'.$DEFAULT.'.css">';
     }
-    echo $_SESSION['login'];
 ?>
 </head>
 

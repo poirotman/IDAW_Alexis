@@ -14,6 +14,7 @@
         </tr>
     </table>
 </form>
+<a href='inscription.php'> s'inscrire </a>
 <?php
 session_start();
 if(isset($_SESSION['login'])){
