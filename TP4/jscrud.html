@@ -3,19 +3,25 @@
     <head>
         <meta charset='utf-8'>
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link rel="stylesheet" href="../Assets/bootstrap-5.0.2-dist/css/bootstrap-grid.css">
+        <link rel="stylesheet" href="../Assets/bootstrap-5.0.2-dist/css/bootstrap.css">
+        <link rel="stylesheet" href="../Assets/bootstrap-5.0.2-dist/css/bootstrap-reboot.css">
+        <link rel="stylesheet" href="../Assets/bootstrap-5.0.2-dist/css/bootstrap-utilities.css">
+        <script type="text/javascript" src="../Assets/bootstrap-5.0.2-dist/js/bootstrap.bundle.js"></script>
+        <script type="text/javascript" src="../Assets/bootstrap-5.0.2-dist/js/bootstrap.js"></script>
+        <script type="text/javascript" src="../Assets/bootstrap-5.0.2-dist/js/bootstrap.esm.js"></script>
         <script src="https://code.jquery.com/jquery-3.4.1.min.js" crossorigin="anonymous"></script>
         <title>tabletest</title>
         <style>
         body{ margin-top: 5em; }
         .table {
-        margin-top: 100px;
         margin-bottom: 100px;
         }
         </style>
     </head>
     <body>
-        <table class="table">
-            <thead>
+        <table class="table table-striped">
+            <thead class="table-dark">
                 <tr>
                     <th scope="col">Nom</th>
                     <th scope="col">Prenom</th>
@@ -31,20 +37,32 @@
         <form id="addStudentForm" action="" onsubmit="onFormSubmit();">
         <div class="form-group row">
             <label for="inputNom" class="col-sm-2 col-form-label">Nom*</label>
-            <div class="col-sm-3">
+            <div class="col-sm-3 p-2">
                 <input type="text" class="form-control" id="inputNom" >
             </div>
         </div>
         <div class="form-group row">
             <label for="inputPrenom" class="col-sm-2 col-form-label">Prénom</label>
-            <div class="col-sm-3">
+            <div class="col-sm-3 p-2">
                 <input type="text" class="form-control" id="inputPrenom" >
             </div>
         </div>
         <div class="form-group row">
             <label for="inputDate" class="col-sm-2 col-form-label">Date de naissance</label>
-            <div class="col-sm-3">
-                <input type="text" class="form-control" id="inputDate">
+            <div class="col-sm-3 p-2">
+                <input type="date" class="form-control" id="inputDate">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="inputAime" class="col-sm-2 col-form-label">Aime le cours</label>
+            <div class="col-sm-2 p-2">
+                <input type="checkbox" class="" id="inputAime">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="inputRemarque" class="col-sm-2 col-form-label">Remarques</label>
+            <div class="col-sm-3 p-2">
+                <input type="text" class="form-control" id="inputRemarque" >
             </div>
         </div>
             <div class="form-group row">
@@ -55,11 +73,76 @@
             </div>
         </form>
     <script>
+        var num_ligne=0;
+        var lignes=[
+        ];
         function onFormSubmit() {
         // prevent the form to be sent to the server
             event.preventDefault();
-            let nom = $("#inputNom").val();
-            $("#studentsTableBody").append(`<tr><td>${nom}</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>`);
+            num_ligne+=1;
+            if($("#textErreur")!=null){
+                    $("#textErreur").detach();
+            }
+            if($("#inputNom").val()!=""){
+                let nom = $("#inputNom").val();
+                let prenom = $("#inputPrenom").val();
+                let date = $("#inputDate").val();
+                let aime = $("#inputAime").prop('checked');
+                if(aime==false){
+                    aime="non";
+                }
+                else{
+                    aime='oui';
+                }
+                let remarques = $("#inputRemarque").val();
+                lignes.push({"nom":nom,"prenom":prenom,"date":date,"aime":aime,"remarques":remarques,"id":num_ligne});
+                var string = "";
+                console.log(lignes[lignes.length-1]);
+                for(let data in lignes[lignes.length-1]){
+                    console.log(data);
+                    if(data!="id"){
+                        string+="<td>"+lignes[lignes.length-1][data];
+                    }
+                }
+                string="<tr id='"+num_ligne+"'>"+string
+                $("#studentsTableBody").append(`${string}
+                        <td>
+                            <button onclick="editRow(${num_ligne})"  type="button" class="btn btn-outline-primary">EDIT</button>
+                            <button onclick="deleteRow(${num_ligne})" type="button" class="btn btn-outline-primary">DELETE</button>
+                        </td>
+                    </tr>`);
+            }
+            else{
+                $("#addStudentForm").prepend(`<div id="textErreur" class='text-danger h4 col-md-6 text-center'>Remplir le Nom !</div>`);
+            }
+        }
+        function editRow(lig){
+            for(let i=0; i<lignes.length; i++){
+                if(lignes[i]['id']==lig){
+                    document.getElementById('inputNom').value=lignes[i]['nom'];
+                    document.getElementById('inputPrenom').value=lignes[i]['prenom'];
+                    console.log(lignes[i]['date']);
+                    document.getElementById('inputDate').value=lignes[i]['date'];
+                    if(lignes[i]['aime']=='oui'){
+                        document.getElementById('inputAime').checked=true;
+                    }
+                    else{
+                        document.getElementById('inputAime').checked=false;
+                    }
+                    document.getElementById('inputRemarque').value=lignes[i]['remarques'];
+                }
+            }
+            deleteRow(lig);
+        }
+        function deleteRow(lig){
+            for(let i=0; i<lignes.length; i++){
+                if(lignes[i]['id']==lig){
+                    lignes.splice(i,1);
+                }
+            }
+            console.log(lignes);
+            console.log(lig);
+            $("#"+lig).detach();
         }
     </script>
     </body>
