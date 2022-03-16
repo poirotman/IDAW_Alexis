@@ -138,11 +138,18 @@
             id: num_ligne,
           });
           $.ajax({
-            url: "addUser.php",
+            url: "./addUser.php",
             method: "POST",
             dataType: "json",
             data: lignes[lignes.length - 1],
-          }).done();
+          })
+            .done(function (data) {
+              console.log("AJAX req succeeded");
+              console.log(data);
+            })
+            .fail(function () {
+              console.log("AJAX req failed");
+            });
           var string = "";
           console.log(lignes[lignes.length - 1]);
           for (let data in lignes[lignes.length - 1]) {
