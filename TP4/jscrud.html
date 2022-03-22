@@ -139,28 +139,49 @@
           // SI EN MODE EDIT
           if (document.getElementById("button-submit").innerHTML == "Edit") {
             console.log(lignes[id_edit]);
-            lignes[id_edit]["nom"] = nom;
-            lignes[id_edit]["prenom"] = prenom;
-            lignes[id_edit]["date"] = date;
-            lignes[id_edit]["aime"] = aime;
-            lignes[id_edit]["remarques"] = remarques;
-            let string = "";
-            for (let data in lignes[id_edit]) {
-              if (data != "id") {
-                string += "<td>" + lignes[id_edit][data] + "</td>";
-              }
-            }
-            string = "<tr id='" + lignes[id_edit]["id"] + "'>" + string;
-            $("#" + lignes[id_edit]["id"]).replaceWith(`${string}
+            $.ajax({
+              url: "./addUser.php",
+              method: "POST",
+              dataType: "json",
+              data: {
+                CRUD: "EDIT",
+                nom: nom,
+                prenom: prenom,
+                date: date,
+                aime: aime,
+                remarques: remarques,
+                id: lignes[id_edit]["id"],
+              },
+            })
+              .done(function (data) {
+                console.log("EDIT AJAX SUCCESS");
+                console.log(data);
+                lignes[id_edit]["nom"] = nom;
+                lignes[id_edit]["prenom"] = prenom;
+                lignes[id_edit]["date"] = date;
+                lignes[id_edit]["aime"] = aime;
+                lignes[id_edit]["remarques"] = remarques;
+                let string = "";
+                for (let data in lignes[id_edit]) {
+                  if (data != "id") {
+                    string += "<td>" + lignes[id_edit][data] + "</td>";
+                  }
+                }
+                string = "<tr id='" + lignes[id_edit]["id"] + "'>" + string;
+                $("#" + lignes[id_edit]["id"]).replaceWith(`${string}
                                 <td>
                                     <button onclick="editRow(${lignes[id_edit]["id"]})"  type="button" class="btn btn-outline-primary">EDIT</button>
                                     <button onclick="deleteRow(${lignes[id_edit]["id"]})" type="button" class="btn btn-outline-primary">DELETE</button>
                                 </td>
                             </tr>`);
-            document.getElementById("button-submit").innerHTML = "Submit";
-            document
-              .getElementById("button-submit")
-              .classList.replace("btn-danger", "btn-primary");
+                document.getElementById("button-submit").innerHTML = "Submit";
+                document
+                  .getElementById("button-submit")
+                  .classList.replace("btn-danger", "btn-primary");
+              })
+              .fail(function () {
+                console.log("EDIT AJAX FAILED");
+              });
           }
 
           // SUBMIT NORMAL
@@ -173,6 +194,7 @@
               method: "POST",
               dataType: "json",
               data: {
+                CRUD: "ADD",
                 nom: nom,
                 prenom: prenom,
                 date: date,
@@ -184,6 +206,7 @@
               // SI AJAX REUSSI
               .done(function (data) {
                 console.log("AJAX req succeeded");
+                console.log(data);
                 lignes.push({
                   nom: nom,
                   prenom: prenom,
@@ -247,14 +270,28 @@
       }
 
       function deleteRow(lig) {
-        for (let i = 0; i < lignes.length; i++) {
-          if (lignes[i]["id"] == lig) {
-            lignes.splice(i, 1);
-          }
-        }
-        console.log(lignes);
-        console.log(lig);
-        $("#" + lig).detach();
+        $.ajax({
+          url: "./addUser.php",
+          method: "POST",
+          dataType: "json",
+          data: {
+            CRUD: "DEL",
+            id: lig,
+          },
+        })
+          .done(function (data) {
+            console.log("Req AJAX success");
+            console.log(data);
+            for (let i = 0; i < lignes.length; i++) {
+              if (lignes[i]["id"] == lig) {
+                lignes.splice(i, 1);
+              }
+            }
+            $("#" + lig).detach();
+          })
+          .fail(function () {
+            console.log("Req AJAX failed");
+          });
       }
     </script>
   </body>
