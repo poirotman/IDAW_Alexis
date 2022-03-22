@@ -8,6 +8,7 @@
         $res=[];
         $res['req']=true;
         $sql="INSERT INTO user VALUES( NULL";
+
         foreach($_POST as $key => $value){
           if($key != 'id'){
             if($key == 'date'){
@@ -28,10 +29,12 @@
         
         $res['sql']=$sql;
         $conn -> query($sql); 
-        $response = $conn -> query("SELECT ID FROM user ORDER BY ID DESC LIMIT 1");
-        $res['response']=$response;
-      
+        $response = $conn->query("SELECT ID FROM user ORDER BY ID DESC LIMIT 1");
+        if($response->num_rows>0){
+          $response=$response->fetch_assoc();
+        }
+        $res['response']=$response['ID'];
         echo json_encode( $res,0);
-        $conn->close;
+        
     }  
 ?>

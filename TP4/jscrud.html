@@ -119,6 +119,8 @@
       function onFormSubmit() {
         // prevent the form to be sent to the server
         event.preventDefault();
+
+        // ON TEST LE NOM ET ON VIRE L'ERREUR PRECEDENTE
         if ($("#textErreur") != null) {
           $("#textErreur").detach();
         }
@@ -134,14 +136,15 @@
           }
           let remarques = $("#inputRemarque").val();
 
-          // Si en mode Edit
+          // SI EN MODE EDIT
           if (document.getElementById("button-submit").innerHTML == "Edit") {
+            console.log(lignes[id_edit]);
             lignes[id_edit]["nom"] = nom;
             lignes[id_edit]["prenom"] = prenom;
             lignes[id_edit]["date"] = date;
             lignes[id_edit]["aime"] = aime;
             lignes[id_edit]["remarques"] = remarques;
-
+            let string = "";
             for (let data in lignes[id_edit]) {
               if (data != "id") {
                 string += "<td>" + lignes[id_edit][data] + "</td>";
@@ -160,9 +163,11 @@
               .classList.replace("btn-danger", "btn-primary");
           }
 
-          // Sinon
+          // SUBMIT NORMAL
           else {
-            //requete AJAX
+            num_ligne += 1;
+
+            //REQUETE AJAX
             $.ajax({
               url: "./addUser.php",
               method: "POST",
@@ -175,6 +180,8 @@
                 remarques: remarques,
               },
             })
+
+              // SI AJAX REUSSI
               .done(function (data) {
                 console.log("AJAX req succeeded");
                 lignes.push({
@@ -183,35 +190,40 @@
                   date: date,
                   aime: aime,
                   remarques: remarques,
-                  id: data['id'],
+                  id: data["response"],
                 });
-                console.log(data);
+                var string = "";
+                let id_lig = lignes[lignes.length - 1]["id"];
+                for (let data in lignes[lignes.length - 1]) {
+                  if (data != "id") {
+                    string +=
+                      "<td>" + lignes[lignes.length - 1][data] + "</td>";
+                  }
+                }
+                string = "<tr id='" + id_lig + "'>" + string;
+                $("#studentsTableBody").append(`${string}
+                                <td>
+                                    <button onclick="editRow(${id_lig})"  type="button" class="btn btn-outline-primary">EDIT</button>
+                                    <button onclick="deleteRow(${id_lig})" type="button" class="btn btn-outline-primary">DELETE</button>
+                                </td>
+                            </tr>`);
+                console.log(lignes);
               })
+
+              // SI AJAX ECHOUE
               .fail(function () {
                 console.log("AJAX req failed");
               });
-
-            var string = "";
-
-            for (let data in lignes[lignes.length - 1]) {
-              if (data != "id") {
-                string += "<td>" + lignes[lignes.length - 1][data] + "</td>";
-              }
-            }
-            string = "<tr id='" + num_ligne + "'>" + string;
-            $("#studentsTableBody").append(`${string}
-                                <td>
-                                    <button onclick="editRow(${num_ligne})"  type="button" class="btn btn-outline-primary">EDIT</button>
-                                    <button onclick="deleteRow(${num_ligne})" type="button" class="btn btn-outline-primary">DELETE</button>
-                                </td>
-                            </tr>`);
           }
+
+          // SI LE NOM N'A PAS ETE ENTRE
         } else {
           $("#addStudentForm").prepend(
             `<div id="textErreur" class='text-danger h4 col-md-6 text-center'>Remplir le Nom !</div>`
           );
         }
       }
+
       function editRow(lig) {
         for (let i = 0; i < lignes.length; i++) {
           if (lignes[i]["id"] == lig) {
