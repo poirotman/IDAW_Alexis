@@ -55,8 +55,20 @@
         break;
 
       case 'READ':
+        $res=[];
+        $res['response']=[];
         $sql="SELECT * FROM user";
+        $response=$conn->query($sql);
+        if($response->num_rows!=0){
+          $row=$response->fetch_array(MYSQLI_ASSOC);
+          while($row!=null){
+            array_push($res['response'],$row);
+            $row=$response->fetch_array(MYSQLI_ASSOC);
+          }
+        }
+        echo json_encode($res,0);
         break;
+
       case 'EDIT':
         $res=[];
         $res['req']=true;

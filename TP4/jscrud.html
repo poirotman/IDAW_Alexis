@@ -48,7 +48,7 @@
       }
     </style>
   </head>
-  <body>
+  <body onload="chargement()">
     <table class="table table-striped">
       <thead class="table-dark">
         <tr>
@@ -116,6 +116,52 @@
       var num_ligne = 0;
       var lignes = [];
       var id_edit = null;
+
+      function chargement() {
+        $.ajax({
+          url: "./addUser.php",
+          method: "POST",
+          dataType: "json",
+          data: {
+            CRUD: "READ",
+          },
+        })
+          .done(function (data) {
+            console.log("SUCCESS");
+            console.log(data);
+            for (let row in data["response"]) {
+              if (data["response"][row]["DATE"] == null) {
+                data["response"][row]["DATE"] = "";
+              }
+              lignes.push({
+                nom: data["response"][row]["NOM"],
+                prenom: data["response"][row]["PRENOM"],
+                date: data["response"][row]["DATE"],
+                aime: data["response"][row]["AIME_LE_COURS"],
+                remarques: data["response"][row]["REMARQUES"],
+                id: data["response"][row]["ID"],
+              });
+              var string = "";
+              let id_lig = lignes[lignes.length - 1]["id"];
+              for (let data in lignes[lignes.length - 1]) {
+                if (data != "id") {
+                  string += "<td>" + lignes[lignes.length - 1][data] + "</td>";
+                }
+              }
+              string = "<tr id='" + id_lig + "'>" + string;
+              $("#studentsTableBody").append(`${string}
+                                <td>
+                                    <button onclick="editRow(${id_lig})"  type="button" class="btn btn-outline-primary">EDIT</button>
+                                    <button onclick="deleteRow(${id_lig})" type="button" class="btn btn-outline-primary">DELETE</button>
+                                </td>
+                            </tr>`);
+            }
+          })
+          .fail(function () {
+            console.log("FAILED");
+          });
+      }
+
       function onFormSubmit() {
         // prevent the form to be sent to the server
         event.preventDefault();
