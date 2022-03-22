@@ -102,7 +102,11 @@
       <div class="form-group row">
         <span class="col-sm-2"></span>
         <div class="col-sm-2">
-          <button type="submit" class="btn btn-primary form-control">
+          <button
+            type="submit"
+            id="button-submit"
+            class="btn btn-primary form-control"
+          >
             Submit
           </button>
         </div>
@@ -111,10 +115,10 @@
     <script>
       var num_ligne = 0;
       var lignes = [];
+      var id_edit = null;
       function onFormSubmit() {
         // prevent the form to be sent to the server
         event.preventDefault();
-        num_ligne += 1;
         if ($("#textErreur") != null) {
           $("#textErreur").detach();
         }
@@ -129,42 +133,79 @@
             aime = "oui";
           }
           let remarques = $("#inputRemarque").val();
-          lignes.push({
-            nom: nom,
-            prenom: prenom,
-            date: date,
-            aime: aime,
-            remarques: remarques,
-            id: num_ligne,
-          });
-          $.ajax({
-            url: "./addUser.php",
-            method: "POST",
-            dataType: "json",
-            data: lignes[lignes.length - 1],
-          })
-            .done(function (data) {
-              console.log("AJAX req succeeded");
-              console.log(data);
-            })
-            .fail(function () {
-              console.log("AJAX req failed");
-            });
-          var string = "";
-          console.log(lignes[lignes.length - 1]);
-          for (let data in lignes[lignes.length - 1]) {
-            console.log(data);
-            if (data != "id") {
-              string += "<td>" + lignes[lignes.length - 1][data];
+
+          // Si en mode Edit
+          if (document.getElementById("button-submit").innerHTML == "Edit") {
+            lignes[id_edit]["nom"] = nom;
+            lignes[id_edit]["prenom"] = prenom;
+            lignes[id_edit]["date"] = date;
+            lignes[id_edit]["aime"] = aime;
+            lignes[id_edit]["remarques"] = remarques;
+
+            for (let data in lignes[id_edit]) {
+              if (data != "id") {
+                string += "<td>" + lignes[id_edit][data] + "</td>";
+              }
             }
+            string = "<tr id='" + lignes[id_edit]["id"] + "'>" + string;
+            $("#" + lignes[id_edit]["id"]).replaceWith(`${string}
+                                <td>
+                                    <button onclick="editRow(${lignes[id_edit]["id"]})"  type="button" class="btn btn-outline-primary">EDIT</button>
+                                    <button onclick="deleteRow(${lignes[id_edit]["id"]})" type="button" class="btn btn-outline-primary">DELETE</button>
+                                </td>
+                            </tr>`);
+            document.getElementById("button-submit").innerHTML = "Submit";
+            document
+              .getElementById("button-submit")
+              .classList.replace("btn-danger", "btn-primary");
           }
-          string = "<tr id='" + num_ligne + "'>" + string;
-          $("#studentsTableBody").append(`${string}
-                        <td>
-                            <button onclick="editRow(${num_ligne})"  type="button" class="btn btn-outline-primary">EDIT</button>
-                            <button onclick="deleteRow(${num_ligne})" type="button" class="btn btn-outline-primary">DELETE</button>
-                        </td>
-                    </tr>`);
+
+          // Sinon
+          else {
+            //requete AJAX
+            $.ajax({
+              url: "./addUser.php",
+              method: "POST",
+              dataType: "json",
+              data: {
+                nom: nom,
+                prenom: prenom,
+                date: date,
+                aime: aime,
+                remarques: remarques,
+              },
+            })
+              .done(function (data) {
+                console.log("AJAX req succeeded");
+                lignes.push({
+                  nom: nom,
+                  prenom: prenom,
+                  date: date,
+                  aime: aime,
+                  remarques: remarques,
+                  id: data['id'],
+                });
+                console.log(data);
+              })
+              .fail(function () {
+                console.log("AJAX req failed");
+              });
+
+            var string = "";
+
+            for (let data in lignes[lignes.length - 1]) {
+              if (data != "id") {
+                string += "<td>" + lignes[lignes.length - 1][data] + "</td>";
+              }
+            }
+            string = "<tr id='" + num_ligne + "'>" + string;
+            $("#studentsTableBody").append(`${string}
+                                <td>
+                                    <button onclick="editRow(${num_ligne})"  type="button" class="btn btn-outline-primary">EDIT</button>
+                                    <button onclick="deleteRow(${num_ligne})" type="button" class="btn btn-outline-primary">DELETE</button>
+                                </td>
+                            </tr>`);
+          }
         } else {
           $("#addStudentForm").prepend(
             `<div id="textErreur" class='text-danger h4 col-md-6 text-center'>Remplir le Nom !</div>`
@@ -176,7 +217,6 @@
           if (lignes[i]["id"] == lig) {
             document.getElementById("inputNom").value = lignes[i]["nom"];
             document.getElementById("inputPrenom").value = lignes[i]["prenom"];
-            console.log(lignes[i]["date"]);
             document.getElementById("inputDate").value = lignes[i]["date"];
             if (lignes[i]["aime"] == "oui") {
               document.getElementById("inputAime").checked = true;
@@ -185,10 +225,15 @@
             }
             document.getElementById("inputRemarque").value =
               lignes[i]["remarques"];
+            id_edit = i;
           }
         }
-        deleteRow(lig);
+        document.getElementById("button-submit").innerHTML = "Edit";
+        document
+          .getElementById("button-submit")
+          .classList.replace("btn-primary", "btn-danger");
       }
+
       function deleteRow(lig) {
         for (let i = 0; i < lignes.length; i++) {
           if (lignes[i]["id"] == lig) {
